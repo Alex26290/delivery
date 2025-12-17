@@ -7,17 +7,10 @@ import argubaydulin.study.delivery.libs.errs.GeneralErrors
 import kotlin.math.abs
 
 
-class Location(private val x: Int, private val y: Int) : ValueObject<Location>() {
-
-    fun create(x: Int, y: Int): Result<Location, Error> {
-        if (x < MIN_COORDINATE || x > MAX_COORDINATE) {
-            return Result.failure(GeneralErrors.valueIsOutOfRange("x", x, MIN_COORDINATE, MAX_COORDINATE))
-        }
-        if (y < MIN_COORDINATE || y > MAX_COORDINATE) {
-            return Result.failure(GeneralErrors.valueIsOutOfRange("y", y, MIN_COORDINATE, MAX_COORDINATE))
-        }
-        return Result.success(Location(x, y))
-    }
+class Location private constructor(
+    val x: Int,
+    val y: Int
+) : ValueObject<Location>() {
 
     fun distanceTo(target: Location): Result<Int, Error> {
         if (this == target) {
@@ -34,6 +27,17 @@ class Location(private val x: Int, private val y: Int) : ValueObject<Location>()
     companion object {
         const val MIN_COORDINATE = 1
         const val MAX_COORDINATE = 10
+
+        fun create(x: Int, y: Int): Result<Location, Error> {
+            if (x < MIN_COORDINATE || x > MAX_COORDINATE) {
+                return Result.failure(GeneralErrors.valueIsOutOfRange("x", x, MIN_COORDINATE, MAX_COORDINATE))
+            }
+            if (y < MIN_COORDINATE || y > MAX_COORDINATE) {
+                return Result.failure(GeneralErrors.valueIsOutOfRange("y", y, MIN_COORDINATE, MAX_COORDINATE))
+            }
+            return Result.success(Location(x, y))
+        }
+
     }
 
 }
