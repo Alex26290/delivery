@@ -1,5 +1,40 @@
 spring:
   application:
     name: delivery
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:delivery}?sslmode=${DB_SSLMODE:disable}
+    username: ${DB_USER:username}
+    password: ${DB_PASSWORD:secret}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+#  kafka:
+#    bootstrap-servers: ${KAFKA_HOST:localhost:9092}
+#    consumer:
+#      group-id: ${KAFKA_CONSUMER_GROUP:basket-group}
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#
+#app:
+#  grpc:
+#    discount-service:
+#      host: ${DISCOUNT_SERVICE_GRPC_HOST:0.0.0.0}
+#      port: ${DISCOUNT_SERVICE_GRPC_PORT:5003}
+#  kafka:
+#    stocks-events-topic: ${KAFKA_STOCKS_EVENTS_TOPIC:stocks.events}
+#    basket-events-topic: ${KAFKA_BASKETS_EVENTS_TOPIC:baskets.events}
+
 server:
   port: 10020
+
