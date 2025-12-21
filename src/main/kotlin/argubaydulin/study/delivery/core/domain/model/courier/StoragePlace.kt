@@ -12,7 +12,7 @@ class StoragePlace private constructor(
     val name: String,
     val totalVolume: Int,
     var orderId: UUID?,
-) : BaseEntity<UUID>() {
+) : BaseEntity<UUID>(id) {
 
     fun canStore(volume: Int): UnitResult<Error> {
         if (isOccupied()) {
@@ -27,7 +27,7 @@ class StoragePlace private constructor(
     fun store(orderId: UUID, volume: Int): UnitResult<Error> {
         val canStore = canStore(volume)
         if (canStore.isFailure) {
-            UnitResult.failure(canStore.error)
+            return UnitResult.failure(canStore.error)
         }
         this.orderId = orderId
         return UnitResult.success()
@@ -46,39 +46,38 @@ class StoragePlace private constructor(
         return UnitResult.success()
     }
 
-    private fun isOccupied(): Boolean {
-        if (this.orderId != null) {
-            return true
-        }
-        return false
-    }
+    private fun isOccupied(): Boolean = orderId != null
 
     companion object {
 
-        fun create(id: UUID, name: String, totalVolume: Int, orderId: UUID?): Result<StoragePlace, Error> {
+        fun create(id: UUID, name: String, totalVolume: Int, orderId: UUID? = null): Result<StoragePlace, Error> {
 
             if (totalVolume <= 0) {
                 return Result.failure(
                     GeneralErrors.valueIsInvalid("totalVolume", "must be greater than 0")
                 )
             }
+            if (name.isBlank()) {
+                return Result.failure(
+                    GeneralErrors.valueIsInvalid("name", "must be not empty0")
+                )
+            }
             return Result.success(StoragePlace(id, name, totalVolume, orderId))
         }
-    }
 
-    private fun valueIsTooBig(volume: Int, totalVolume: Int): Error {
-        return Error.of(
-            "value.is.too.big.for.current.storage",
-            "The value $volume is bigger than storage's totalVolume $totalVolume"
-        )
-    }
+        private fun valueIsTooBig(volume: Int, totalVolume: Int): Error {
+            return Error.of(
+                "value.is.too.big.for.current.storage",
+                "The value $volume exceeds storage's total volume of $totalVolume"
+            )
+        }
 
-
-    private fun storageIsOccupied(): Error {
-        return Error.of(
-            "storage.is.occupied",
-            "Current storage is already occupied"
-        )
+        private fun storageIsOccupied(): Error {
+            return Error.of(
+                "storage.is.occupied",
+                "Current storage is already occupied"
+            )
+        }
     }
 
 }
